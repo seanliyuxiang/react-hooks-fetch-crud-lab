@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 
-function QuestionForm(props) {
+function QuestionForm({addNewQuestionWrapperFunc}) {
+  const BASE_URL = 'http://localhost:4000/questions';
+
   const [formData, setFormData] = useState({
     prompt: "",
     answer1: "",
@@ -11,15 +13,44 @@ function QuestionForm(props) {
   });
 
   function handleChange(event) {
+    let value = event.target.value;
+
+    // convert to number for `correctIndex`
+    if (event.target.name === 'correctIndex') {
+      value = parseInt(value);
+    }
+
     setFormData({
       ...formData,
-      [event.target.name]: event.target.value,
+      [event.target.name]: value,
     });
   }
 
   function handleSubmit(event) {
     event.preventDefault();
-    console.log(formData);
+    
+    // creating the new question object using `formData`
+    const newQuestionObj = {
+      prompt: formData.prompt,
+      answers: [
+        formData.answer1,
+        formData.answer2,
+        formData.answer3,
+        formData.answer4
+      ],
+      correctIndex: formData.correctIndex
+    };
+
+    // POST /questions
+    fetch(BASE_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newQuestionObj)
+    })
+    .then(response => response.json())
+    .then(data => addNewQuestionWrapperFunc(data));
   }
 
   return (
