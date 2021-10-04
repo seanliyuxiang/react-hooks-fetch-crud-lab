@@ -6,6 +6,7 @@ import QuestionList from "./QuestionList";
 function App() {
   const BASE_URL = 'http://localhost:4000/questions';
   
+  // defining states
   const [page, setPage] = useState("List");
   const [questionsListArr, setQuestionsListArr] = useState([]);
 
